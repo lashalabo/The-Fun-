@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The FUN - Find Your Next Adventure</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            colors: {
+              'brand-purple': '#6B46C1',
+              'brand-purple-light': '#805AD5',
+              'brand-teal': '#319795',
+              'brand-teal-light': '#4FD1C5',
+              'brand-gold': '#D69E2E',
+              'brand-gold-light': '#F6E05E',
+              'dark-bg': '#1A202C',
+              'dark-surface': '#2D3748',
+              'dark-text': '#E2E8F0',
+              'light-text': '#2D3748',
+            }
+          }
+        }
+      }
+      const plugin = tailwind.plugin(function ({ addComponents }) {
+          addComponents({
+            '.input-style': {
+              '@apply block w-full px-3 py-2 bg-white dark:bg-dark-surface border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-brand-purple focus:border-brand-purple': {},
+            }
+          })
+        })
+        tailwind.config.plugins = [plugin]
+    </script>
+  <script type="importmap">
+  {
+    "imports": {
+      "@google/genai": "https://esm.sh/@google/genai@^1.14.0",
+      "react-router-dom": "https://esm.sh/react-router-dom@^7.8.1"
+    }
+  }
+  </script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-white dark:bg-dark-bg">
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

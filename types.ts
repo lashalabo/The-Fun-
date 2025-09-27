@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export interface ChatMessage {
   id: string;
   text: string;
@@ -18,6 +19,8 @@ export interface Activity {
   name: string;
   icon: string;
 }
+=======
+>>>>>>> 5179a46835ae9d155dfe77729e15f1c572cdad50
 
 export enum EventCategory {
   PARTY = 'Party',
@@ -58,15 +61,22 @@ export interface Event {
   host: User;
   category: EventCategory;
   description: string;
+<<<<<<< HEAD
   startTime: Date;
   endTime: Date;
+=======
+  time: Date;
+>>>>>>> 5179a46835ae9d155dfe77729e15f1c572cdad50
   location: { lat: number; lng: number; address: string };
   isPrivate: boolean;
   capacity: number;
   attendees: User[];
+<<<<<<< HEAD
   attendeeIds: string[];
   activities?: Activity[];
   musicInfo?: string;
+=======
+>>>>>>> 5179a46835ae9d155dfe77729e15f1c572cdad50
   genderRatio: GenderRatio;
   contributions: string[];
   popularity: number;

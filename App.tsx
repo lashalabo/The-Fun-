@@ -1,9 +1,15 @@
+<<<<<<< HEAD
 // src/App.tsx
 
 import React from 'react';
 import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import { LoginPage } from './pages/LoginPage';
+=======
+
+import React from 'react';
+import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+>>>>>>> 5179a46835ae9d155dfe77729e15f1c572cdad50
 import { DiscoveryPage } from './pages/DiscoveryPage';
 import { EventDetailPage } from './pages/EventDetailPage';
 import { CreateEventPage } from './pages/CreateEventPage';
@@ -15,6 +21,7 @@ import { useTheme } from './hooks/useTheme';
 
 const AppContent: React.FC = () => {
   const location = useLocation();
+<<<<<<< HEAD
   const { user, loading } = useAuth(); // Get user and loading state from context
   const isDiscoverPage = location.pathname === '/discover' || location.pathname === '/';
 
@@ -57,6 +64,32 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
   const { theme } = useTheme();
+=======
+  const isDiscoverPage = location.pathname === '/discover' || location.pathname === '/';
+
+  return (
+     <div className={`${isDiscoverPage ? 'bg-transparent' : 'bg-white dark:bg-dark-bg'} text-light-text dark:text-dark-text min-h-screen max-w-md mx-auto flex flex-col shadow-2xl`}>
+        <Header />
+      <main className={`flex-grow relative pb-16 ${isDiscoverPage ? '' : 'overflow-y-auto'}`}>
+        <Routes>
+            <Route path="/" element={<Navigate to="/discover" />} />
+            <Route path="/discover" element={<DiscoveryPage />} />
+            <Route path="/event/:id" element={<EventDetailPage />} />
+            <Route path="/create" element={<CreateEventPage />} />
+            <Route path="/notifications" element={<NotificationsPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+          </Routes>
+        </main>
+        <BottomNav />
+      </div>
+  );
+}
+
+
+const App: React.FC = () => {
+  const { theme } = useTheme();
+
+>>>>>>> 5179a46835ae9d155dfe77729e15f1c572cdad50
   return (
     <div className={`${theme} font-sans`}>
       <HashRouter>
@@ -66,4 +99,8 @@ const App: React.FC = () => {
   );
 };
 
+<<<<<<< HEAD
 export default App;
+=======
+export default App;
+>>>>>>> 5179a46835ae9d155dfe77729e15f1c572cdad50

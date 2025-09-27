@@ -5,7 +5,10 @@ import { Icon } from '../components/Icon';
 import type { Notification } from '../types';
 import { Link } from 'react-router-dom';
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5179a46835ae9d155dfe77729e15f1c572cdad50
 const NOTIFICATION_ICONS = {
   invite: { icon: 'user', color: 'text-blue-500' },
   request: { icon: 'user', color: 'text-yellow-500' },
@@ -15,8 +18,11 @@ const NOTIFICATION_ICONS = {
 };
 
 export const NotificationsPage: React.FC = () => {
+<<<<<<< HEAD
   const location = useLocation();
   const showRatingForEventId = location.state?.showRatingForEventId;
+=======
+>>>>>>> 5179a46835ae9d155dfe77729e15f1c572cdad50
     
   const renderNotification = (notification: Notification) => {
     const { icon, color } = NOTIFICATION_ICONS[notification.type];
@@ -36,6 +42,7 @@ export const NotificationsPage: React.FC = () => {
         {!notification.read && <div className="w-2.5 h-2.5 bg-brand-purple dark:bg-brand-teal rounded-full self-center"></div>}
       </div>
     );
+<<<<<<< HEAD
     if (notification.type === 'rating') {
       return (
         <Link to={`/profile`} state={{ showRatingForEventId: notification.relatedEventId }} key={notification.id}>
@@ -43,6 +50,9 @@ export const NotificationsPage: React.FC = () => {
         </Link>
       );
     }
+=======
+
+>>>>>>> 5179a46835ae9d155dfe77729e15f1c572cdad50
     if (notification.relatedEventId) {
       return (
         <Link to={`/event/${notification.relatedEventId}`} key={notification.id} className="block hover:bg-gray-50 dark:hover:bg-dark-surface">

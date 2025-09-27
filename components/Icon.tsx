@@ -17,6 +17,7 @@ const ICONS = {
   users: <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm6-11a4 4 0 11-8 0 4 4 0 018 0z" />,
   calendar: <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />,
   location: <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />,
+<<<<<<< HEAD
   // --- ADD THESE THREE CORRECTED ICONS ---
   dj: <path strokeLinecap="round" strokeLinejoin="round" d="M12 1a9 9 0 00-9 9v7h3v-7a6 6 0 0112 0v7h3v-7a9 9 0 00-9-9z" />,
   microphone: <path strokeLinecap="round" strokeLinejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3zM19 10v2a7 7 0 01-14 0v-2h2v2a5 5 0 0010 0v-2h2z" />,
@@ -24,6 +25,8 @@ const ICONS = {
   // --- END OF NEW ICONS ---
   // --- ADD THIS NEW ICON ---
   live: <path strokeLinecap="round" strokeLinejoin="round" d="M15.5 15.5l-3.5-2-3.5 2 1-4-3-2.5h4l1.5-4 1.5 4h4l-3 2.5 1 4zM2 12a10 10 0 1120 0 10 10 0 01-20 0z" />,  // --- END OF NEW ICON ---
+=======
+>>>>>>> 5179a46835ae9d155dfe77729e15f1c572cdad50
 };
 
 interface IconProps {

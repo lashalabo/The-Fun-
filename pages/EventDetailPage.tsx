@@ -109,6 +109,7 @@ export const EventDetailPage: React.FC = () => {
           <h1 className="text-3xl font-black mt-1">{event.title}</h1>
         </div>
       </div>
+<<<<<<< HEAD
       <div className="p-4 space-y-6">
         <div className="flex items-center justify-between p-3 bg-gray-100 dark:bg-dark-surface rounded-lg">
           <div className="flex items-center space-x-3">
@@ -162,11 +163,59 @@ export const EventDetailPage: React.FC = () => {
               <img key={att.id} src={att.avatarUrl} alt={att.name} className="w-10 h-10 rounded-full border-2 border-white dark:border-dark-bg object-cover" />
             ))}
             {event.attendees && event.attendees.length > 7 && (
+=======
+
+      <div className="p-4 space-y-6">
+        {/* Host Info */}
+        <div className="flex items-center justify-between p-3 bg-gray-100 dark:bg-dark-surface rounded-lg">
+          <div className="flex items-center space-x-3">
+            <img src={event.host.avatarUrl} alt={event.host.name} className="w-12 h-12 rounded-full" />
+            <div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Hosted by</p>
+              <p className="font-bold">{event.host.name}</p>
+            </div>
+          </div>
+          <RatingStars rating={event.host.rating} />
+        </div>
+
+        {/* Event Details */}
+        <div className="space-y-4 text-sm">
+          <div className="flex items-start space-x-3">
+            <Icon name="calendar" className="w-5 h-5 mt-1 text-brand-purple dark:text-brand-teal-light flex-shrink-0" />
+            <div>
+              <p className="font-semibold">Date & Time</p>
+              <p className="text-gray-600 dark:text-gray-300">{dateTimeFormatter.format(event.time)}</p>
+            </div>
+          </div>
+          <div className="flex items-start space-x-3">
+            <Icon name="location" className="w-5 h-5 mt-1 text-brand-purple dark:text-brand-teal-light flex-shrink-0" />
+            <div>
+              <p className="font-semibold">Location</p>
+              <p className="text-gray-600 dark:text-gray-300">{event.location.address}</p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 className="font-bold mb-2">About this event</h3>
+          <p className="text-gray-600 dark:text-gray-300">{event.description}</p>
+        </div>
+
+        {/* Guest List */}
+        <div>
+          <h3 className="font-bold mb-2">Guests ({event.attendees.length}/{event.capacity})</h3>
+          <div className="flex -space-x-2">
+            {event.attendees.slice(0, 7).map(user => (
+              <img key={user.id} src={user.avatarUrl} alt={user.name} className="w-10 h-10 rounded-full border-2 border-white dark:border-dark-bg" />
+            ))}
+            {event.attendees.length > 7 && (
+>>>>>>> 5179a46835ae9d155dfe77729e15f1c572cdad50
               <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center font-bold text-xs border-2 border-white dark:border-dark-bg">
                 +{event.attendees.length - 7}
               </div>
             )}
           </div>
+<<<<<<< HEAD
           {/* Guest names list */}
           {event.attendees && event.attendees.length > 0 && (
             <div className="mt-2 text-sm">
@@ -189,3 +238,23 @@ export const EventDetailPage: React.FC = () => {
     
   );
 };
+=======
+        </div>
+
+        {/* Host View: Guest Requests */}
+        {isHost && requests.length > 0 && (
+          <div>
+            <h3 className="font-bold mb-2">Guest Requests ({requests.length})</h3>
+            <div className="space-y-2">
+                {requests.map(user => <GuestRequest key={user.id} user={user} onApprove={handleApprove} onReject={handleReject} />)}
+            </div>
+          </div>
+        )}
+
+        {/* Action Button */}
+        <div className="pt-4">{getActionButton()}</div>
+      </div>
+    </div>
+  );
+};
+>>>>>>> 5179a46835ae9d155dfe77729e15f1c572cdad50

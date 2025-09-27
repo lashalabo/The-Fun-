@@ -1,11 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore"; // Import firestore
-<<<<<<< HEAD
 import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check'; // Import App Check
 
-=======
->>>>>>> 5179a46835ae9d155dfe77729e15f1c572cdad50
 
 
 // Your web app's Firebase configuration
@@ -22,7 +19,6 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-<<<<<<< HEAD
 // --- ADD THIS BLOCK ---
 if (import.meta.env.DEV) {
     // This is the debug token you generated in the Firebase Console
@@ -37,8 +33,6 @@ initializeAppCheck(app, {
 });
 // --- END OF BLOCK ---
 
-=======
->>>>>>> 5179a46835ae9d155dfe77729e15f1c572cdad50
 // Initialize and export the Firebase Authentication service so we can use it on the login page
 export const auth = getAuth(app);
 export const db = getFirestore(app); // Initialize and export firestore

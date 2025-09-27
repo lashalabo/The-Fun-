@@ -14,19 +14,12 @@
     "firebase": "^12.1.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-<<<<<<< HEAD
     "react-router-dom": "^7.8.1",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
     "@types/uuid": "^10.0.0",
-=======
-    "react-router-dom": "^7.8.1"
-  },
-  "devDependencies": {
-    "@types/node": "^22.14.0",
->>>>>>> 5179a46835ae9d155dfe77729e15f1c572cdad50
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
   }

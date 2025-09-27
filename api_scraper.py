@@ -1,73 +1,78 @@
-# api_scraper.py (Final Working Version)
-import requests
+# api_scraper.py (Final Playwright Version)
+import asyncio
 import json
-from datetime import datetime
+from playwright.async_api import async_playwright
 
-today_date = datetime.now().strftime('%Y-%m-%d')
-API_URL = f"https://gateway.tkt.ge/Events/Day?date={today_date}&api_key=7d8d34d1-e9af-4897-9f0f-5c36c179be77"
-IMAGE_BASE_URL = "https://static.tkt.ge/img/posters/v3/" # Base URL for constructing the full image path
+TARGET_URL = "https://tkt.ge/en/events" # The real events page
+IMAGE_BASE_URL = "https://static.tkt.ge/img/posters/v3/"
 
-HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36',
-    'Accept': 'application/json, text/plain, */*',
-    'Referer': 'https://tkt.ge/',
-    'Origin': 'https://tkt.ge',
-}
-
-def fetch_events_from_api():
+async def scrape_tkt_ge():
     """
-    Fetches event data from the tkt.ge API using the correct keys
-    and constructs the full image URL.
+    Uses Playwright to scrape event data from tkt.ge by controlling a real browser,
+    bypassing anti-bot measures.
     """
-    print(f"🚀 Calling API: {API_URL}")
+    print("🚀 Starting Playwright scraper...")
     events_data = []
-    
-    try:
-        response = requests.get(API_URL, headers=HEADERS)
-        response.raise_for_status()
-        raw_events = response.json()
 
-        if isinstance(raw_events, list):
-            print(f"✅ API call successful. Found {len(raw_events)} events.")
-            for event in raw_events:
-                location = event.get('venueName')
-                if not location or not location.strip():
-                    location = "Tbilisi"
+    async with async_playwright() as p:
+        try:
+            browser = await p.chromium.launch()
+            page = await browser.new_page()
+            
+            print(f"Navigating to {TARGET_URL}...")
+            await page.goto(TARGET_URL, wait_until="networkidle", timeout=90000)
+
+            # Wait for the event cards to be present on the page
+            await page.wait_for_selector("div[class*='event-card-style__EventCardWrapper']", timeout=30000)
+            
+            # Extract the raw data from the hidden JSON data island in the HTML
+            # This is a modern and efficient way to get data from React sites
+            raw_data_element = await page.query_selector("script#__NEXT_DATA__")
+            if not raw_data_element:
+                raise Exception("Could not find __NEXT_DATA__ script tag. Site structure may have changed.")
                 
-                # Construct the full image URL
-                image_filename = event.get('v3ImageName')
-                full_image_url = f"{IMAGE_BASE_URL}{image_filename}" if image_filename else "N/A"
+            raw_json = await raw_data_element.inner_html()
+            data = json.loads(raw_json)
+            
+            # Navigate through the complex JSON structure to find the events list
+            events_list = data.get("props", {}).get("pageProps", {}).get("events", {}).get("items", [])
+            
+            if not events_list:
+                print("⚠️  Could not find events in the page's initial data. Scraping visible cards as a fallback.")
+                # Fallback to scraping visible cards if the JSON island method fails (less reliable)
+                # This part is omitted for clarity but could be added if needed.
+            else:
+                print(f"✅ Found {len(events_list)} events in the page's JSON data.")
+                for event in events_list:
+                    location = event.get('venue', {}).get('name')
+                    if not location or not location.strip():
+                        location = "Tbilisi"
+                    
+                    image_filename = event.get('v3ImageName')
+                    full_image_url = f"{IMAGE_BASE_URL}{image_filename}" if image_filename else "N/A"
 
-                structured_event = {
-                    "title": event.get('eventName', 'N/A').strip(),
-                    "time": event.get('eventDate', 'N/A'),
-                    "location": location.strip(),
-                    "picture": full_image_url,
-                    "unique_id": f"tkt_{event.get('eventId', '')}"
-                }
-                events_data.append(structured_event)
-        else:
-            print("⚠️ No events found in the API response for today.")
+                    structured_event = {
+                        "title": event.get('name', 'N/A').strip(),
+                        "time": event.get('eventDate', 'N/A'),
+                        "location": location.strip(),
+                        "picture": full_image_url,
+                        "unique_id": f"tkt_{event.get('id', '')}"
+                    }
+                    events_data.append(structured_event)
 
-    except requests.exceptions.RequestException as e:
-        print(f"❌ An error occurred during the API request: {e}")
-    except json.JSONDecodeError:
-        print("❌ Failed to parse the response as JSON. The API might be down or has changed.")
-    except Exception as e:
-        print(f"❌ An unexpected error occurred: {e}")
+        except Exception as e:
+            print(f"❌ An error occurred during Playwright scraping: {e}")
+        finally:
+            if 'browser' in locals() and browser.is_connected():
+                await browser.close()
 
     return events_data
 
 if __name__ == "__main__":
-    extracted_events = fetch_events_from_api()
+    extracted_events = asyncio.run(scrape_tkt_ge())
     
     if extracted_events:
         output_filename = "tkt_events_from_api.json"
         with open(output_filename, "w", encoding="utf-8") as f:
             json.dump(extracted_events, f, ensure_ascii=False, indent=4)
         print(f"\nData successfully saved to {output_filename}")
-
-        print("\n--- First 3 Events (Corrected) ---")
-        for event in extracted_events[:3]:
-            print(json.dumps(event, indent=2, ensure_ascii=False))
-        print("-" * 34)

@@ -2,41 +2,34 @@
 
 name: Scrape TKT.GE Events
 
-# Controls when the action will run
 on:
-  # Allows you to run this workflow manually from the Actions tab on GitHub
   workflow_dispatch:
-  
-  # Runs the job automatically every day at 01:00 AM UTC (5 AM in Tbilisi)
   schedule:
     - cron: '0 1 * * *'
 
 jobs:
   scrape-and-commit:
-    runs-on: ubuntu-latest # Use a standard Linux virtual machine
+    runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Check out your repository's code
       - name: Check out repo
         uses: actions/checkout@v4
 
-      # Step 2: Set up the Python environment
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10' # You can change this to your preferred Python version
+          python-version: '3.10'
 
-      # Step 3: Install the necessary Python libraries from requirements.txt
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          # --- ADD THIS LINE ---
+          playwright install --with-deps chromium
 
-      # Step 4: Run your Python scraper script
       - name: Run the scraper
         run: python api_scraper.py
 
-      # Step 5: Automatically commit the updated JSON file back to your repository
       - name: Commit and push if there are changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:

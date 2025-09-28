@@ -1,4 +1,4 @@
-# api_scraper.py (Final Corrected Version)
+# api_scraper.py (Enhanced)
 import asyncio
 import json
 from playwright.async_api import async_playwright
@@ -8,12 +8,12 @@ IMAGE_BASE_URL = "https://static.tkt.ge/img/posters/v3/"
 
 async def scrape_tkt_ge():
     """
-    Uses Playwright to scrape event data from tkt.ge by controlling a real browser,
-    bypassing anti-bot measures.
+    Uses Playwright to scrape detailed event data from tkt.ge,
+    including description, category, and GPS coordinates if available.
     """
-    print("🚀 Starting Playwright scraper...")
+    print("🚀 Starting Enhanced Playwright scraper...")
     events_data = []
-    browser = None  # Initialize browser to None
+    browser = None
 
     async with async_playwright() as p:
         try:
@@ -27,7 +27,7 @@ async def scrape_tkt_ge():
             
             raw_data_element = await page.query_selector("script#__NEXT_DATA__")
             if not raw_data_element:
-                raise Exception("Could not find __NEXT_DATA__ script tag. Site structure may have changed.")
+                raise Exception("Could not find __NEXT_DATA__ script tag.")
                 
             raw_json = await raw_data_element.inner_html()
             data = json.loads(raw_json)
@@ -39,19 +39,22 @@ async def scrape_tkt_ge():
             else:
                 print(f"✅ Found {len(events_list)} events in the page's JSON data.")
                 for event in events_list:
-                    location = event.get('venue', {}).get('name')
-                    if not location or not location.strip():
-                        location = "Tbilisi"
+                    venue = event.get('venue', {})
+                    location_name = venue.get('name', "Tbilisi")
                     
                     image_filename = event.get('v3ImageName')
                     full_image_url = f"{IMAGE_BASE_URL}{image_filename}" if image_filename else "N/A"
 
                     structured_event = {
+                        "id": event.get('id', ''),
                         "title": event.get('name', 'N/A').strip(),
+                        "description": event.get('description', 'No details available.'),
+                        "category": event.get('categoryName', 'General'),
                         "time": event.get('eventDate', 'N/A'),
-                        "location": location.strip(),
+                        "location_name": location_name.strip(),
+                        "latitude": venue.get('latitude'),
+                        "longitude": venue.get('longitude'),
                         "picture": full_image_url,
-                        "unique_id": f"tkt_{event.get('id', '')}"
                     }
                     events_data.append(structured_event)
 

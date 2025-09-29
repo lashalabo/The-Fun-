@@ -1,0 +1,35 @@
+[
+  {
+    "unique_id": "tkt_today_1",
+    "title": "Tbilisi Street Art Tour",
+    "description": "Explore the vibrant street art scene in Tbilisi's hidden alleys.",
+    "category": "Party",
+    "time": "2025-09-28T14:00:00",
+    "location": "Fabrika Tbilisi",
+    "latitude": 41.7168,
+    "longitude": 44.7892,
+    "picture": "https://i.imgur.com/gAm92KEL.jpg"
+  },
+  {
+    "unique_id": "tkt_tomorrow_1",
+    "title": "Evening Concert at the Conservatory",
+    "description": "An evening of classical music.",
+    "category": "Sports",
+    "time": "2025-09-29T19:30:00",
+    "location": "Tbilisi State Conservatoire",
+    "latitude": 41.7028,
+    "longitude": 44.7909,
+    "picture": "https://i.imgur.com/pBq2pLzl.jpg"
+  },
+  {
+    "unique_id": "tkt_weekend_1",
+    "title": "Weekend Hike to Mtatsminda",
+    "description": "Join us for a scenic weekend hike and enjoy the views.",
+    "category": "Sports",
+    "time": "2025-10-04T10:00:00",
+    "location": "Mtatsminda Park",
+    "latitude": 41.6932,
+    "longitude": 44.7865,
+    "picture": "https://i.imgur.com/K3eY2fjl.jpg"
+  }
+]

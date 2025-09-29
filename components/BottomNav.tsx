@@ -6,6 +6,7 @@ import { Icon } from './Icon';
 const navItems = [
   { path: '/discover', icon: 'map', label: 'Discover' },
   { path: '/create', icon: 'plusCircle', label: 'Create' },
+  { path: '/friends', icon: 'userPlus', label: 'Friends' },
   { path: '/notifications', icon: 'bell', label: 'Alerts' },
   { path: '/profile', icon: 'user', label: 'Profile' },
 ];

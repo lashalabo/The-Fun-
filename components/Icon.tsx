@@ -15,6 +15,9 @@ const ICONS = {
   checkCircle: <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />,
   xCircle: <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />,
   users: <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm6-11a4 4 0 11-8 0 4 4 0 018 0z" />,
+  usersGroup: <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m-7.14-2.26a3 3 0 00-4.682 2.72 9.094 9.094 0 003.741.479M12 12a4 4 0 100-8 4 4 0 000 8z" />,
+  usersClassic: <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-4.663M12 12a4 4 0 100-8 4 4 0 000 8z" />,
+  userPlus: <path strokeLinecap="round" strokeLinejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />,
   calendar: <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />,
   location: <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />,
   // --- ADD THESE THREE CORRECTED ICONS ---
@@ -22,6 +25,8 @@ const ICONS = {
   microphone: <path strokeLinecap="round" strokeLinejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3zM19 10v2a7 7 0 01-14 0v-2h2v2a5 5 0 0010 0v-2h2z" />,
   musicNote: <path strokeLinecap="round" strokeLinejoin="round" d="M9 18V5.22c0-.79.79-1.38 1.55-.99l8 4.22c.68.36.68 1.43 0 1.79l-8 4.22C9.79 19.6 9 19.01 9 18.22z" />,
   // --- END OF NEW ICONS ---
+  lock: <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />,
+  globe: <path strokeLinecap="round" strokeLinejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2h8a2 2 0 002-2v-1a2 2 0 012-2h1.945M7.881 4.002l.023.002a2 2 0 011.995 1.995V11a3 3 0 003 3h0a3 3 0 003-3V5.999a2 2 0 011.995-1.995l.023-.002m-11.977 0A23.94 23.94 0 0012 3.5c2.12 0 4.207.29 6.119.858" />,
   // --- ADD THIS NEW ICON ---
   live: <path strokeLinecap="round" strokeLinejoin="round" d="M15.5 15.5l-3.5-2-3.5 2 1-4-3-2.5h4l1.5-4 1.5 4h4l-3 2.5 1 4zM2 12a10 10 0 1120 0 10 10 0 01-20 0z" />,  // --- END OF NEW ICON ---
 };

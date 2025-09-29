@@ -1,48 +1,26 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { GoogleMap, useJsApiLoader, MarkerF } from '@react-google-maps/api';
+// components/Map.tsx (Updated)
+import React, { useState, useEffect } from 'react';
+import { GoogleMap, useJsApiLoader, MarkerF, InfoWindowF } from '@react-google-maps/api';
+import { useNavigate } from 'react-router-dom';
 import type { Event } from '../types';
 import { useTheme } from '../hooks/useTheme';
 import { mapStyles } from './mapStyles';
 
 const libraries: ('places')[] = ['places'];
-
-const containerStyle = {
-    width: '100%',
-    height: '100vh',
-};
-
-const defaultCenter = {
-    lat: 41.7151,
-    lng: 44.8271, // Centered on Tbilisi
-};
+const containerStyle = { width: '100%', height: '100vh' };
+const defaultCenter = { lat: 41.7151, lng: 44.8271 };
 
 export const Map: React.FC<{ events: Event[] }> = ({ events }) => {
-    const [center, setCenter] = useState(defaultCenter);
+    const navigate = useNavigate();
     const { theme } = useTheme();
+    const [activeMarker, setActiveMarker] = useState<string | null>(null);
+    const [center, setCenter] = useState(defaultCenter);
 
     const { isLoaded, loadError } = useJsApiLoader({
         id: 'google-map-script',
         googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
         libraries,
     });
-
-    // --- CORRECTED ICON DEFINITION USING useMemo ---
-    const { categoryIcons, defaultIcon } = useMemo(() => {
-        if (!isLoaded) return { categoryIcons: {}, defaultIcon: {} }; // Return empty objects if maps is not loaded
-
-        const icons = {
-            Party: { path: window.google.maps.SymbolPath.CIRCLE, fillColor: '#8B5CF6', fillOpacity: 1, strokeWeight: 0, scale: 8 },
-            Picnic: { path: window.google.maps.SymbolPath.CIRCLE, fillColor: '#10B981', fillOpacity: 1, strokeWeight: 0, scale: 8 },
-            Sports: { path: window.google.maps.SymbolPath.CIRCLE, fillColor: '#3B82F6', fillOpacity: 1, strokeWeight: 0, scale: 8 },
-            Gaming: { path: window.google.maps.SymbolPath.CIRCLE, fillColor: '#EF4444', fillOpacity: 1, strokeWeight: 0, scale: 8 },
-            Club: { path: window.google.maps.SymbolPath.CIRCLE, fillColor: '#EC4899', fillOpacity: 1, strokeWeight: 0, scale: 8 },
-            Study: { path: window.google.maps.SymbolPath.CIRCLE, fillColor: '#F59E0B', fillOpacity: 1, strokeWeight: 0, scale: 8 },
-        };
-        const defIcon = { path: window.google.maps.SymbolPath.CIRCLE, fillColor: '#6B7280', fillOpacity: 1, strokeWeight: 0, scale: 8 };
-
-        return { categoryIcons: icons, defaultIcon: defIcon };
-    }, [isLoaded]); // This will re-run only when isLoaded changes
-
 
     useEffect(() => {
         if (navigator.geolocation) {
@@ -51,6 +29,10 @@ export const Map: React.FC<{ events: Event[] }> = ({ events }) => {
             });
         }
     }, []);
+
+    const handleMarkerClick = (event: Event) => {
+        navigate(`/event/${event.id}`, { state: { event } });
+    };
 
     if (loadError) return <div>Error loading maps</div>;
     if (!isLoaded) return <div>Loading...</div>;
@@ -64,15 +46,28 @@ export const Map: React.FC<{ events: Event[] }> = ({ events }) => {
                 styles: theme === 'dark' ? mapStyles.dark : mapStyles.light,
                 disableDefaultUI: true,
                 zoomControl: true,
-                scrollwheel: true, // Add this line
+                scrollwheel: true,
             }}
         >
             {events.map((event) => (
                 <MarkerF
                     key={event.id}
                     position={event.location}
-                    icon={categoryIcons[event.category as keyof typeof categoryIcons] || defaultIcon}
-                />
+                    onClick={() => handleMarkerClick(event)}
+                    onMouseOver={() => setActiveMarker(event.id)}
+                    onMouseOut={() => setActiveMarker(null)}
+                >
+                    {activeMarker === event.id && (
+                        <InfoWindowF
+                            onCloseClick={() => setActiveMarker(null)}
+                            options={{ disableAutoPan: true }} // Add this 'options' prop
+                        >
+                            <div className="p-1">
+                                <h3 className="font-bold text-md text-gray-800">{event.title}</h3>
+                            </div>
+                        </InfoWindowF>
+                    )}
+                </MarkerF>
             ))}
         </GoogleMap>
     );

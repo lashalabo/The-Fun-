@@ -8,6 +8,7 @@ import { DiscoveryPage } from './pages/DiscoveryPage';
 import { EventDetailPage } from './pages/EventDetailPage';
 import { CreateEventPage } from './pages/CreateEventPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { FindFriendsPage } from './pages/FindFriendsPage';
 import { NotificationsPage } from './pages/NotificationsPage';
 import { BottomNav } from './components/BottomNav';
 import { Header } from './components/Header';
@@ -45,6 +46,7 @@ const AppContent: React.FC = () => {
           <Route path="/discover" element={<DiscoveryPage />} />
           <Route path="/event/:id" element={<EventDetailPage />} />
           <Route path="/create" element={<CreateEventPage />} />
+          <Route path="/friends" element={<FindFriendsPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/login" element={<Navigate to="/profile" />} />

@@ -126,7 +126,8 @@ export const CreateEventPage: React.FC = () => {
                 category,
                 startTime: Timestamp.fromDate(new Date(`${eventDate}T${startTime}`)),
                 endTime: Timestamp.fromDate(new Date(`${eventDate}T${endTime}`)),
-                isPrivate: (document.querySelector('input[name="eventType"]:checked') as HTMLInputElement)?.value === 'private',
+                // --- FIX: Use the 'isPrivate' state variable for reliability ---
+                isPrivate: isPrivate,
                 location: { address: (document.getElementById('location') as HTMLInputElement).value, lat, lng },
                 addressDetails,
                 host: hostData,

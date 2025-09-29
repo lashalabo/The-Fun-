@@ -1,0 +1,43 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /events/{eventId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.host.id == request.auth.uid;
+      allow update: if request.auth != null && resource.data.host.id == request.auth.uid;
+      allow delete: if false;
+    }
+
+    match /chats/{eventId} {
+      function isAttendee() {
+        return request.auth.uid in get(/databases/$(database)/documents/events/$(eventId)).data.attendeeIds;
+      }
+      allow read, create, update: if isAttendee();
+      allow delete: if false;
+    }
+
+    match /friendships/{friendshipId} {
+      function isParticipant() {
+        return request.auth.uid in resource.data.userIds;
+      }
+      function isRequestee() {
+        return request.auth.uid == resource.data.requesteeId;
+      }
+      allow read, delete: if isParticipant();
+      allow create: if request.auth.uid == request.resource.data.requesterId;
+      allow update: if isRequestee() && resource.data.status == 'pending';
+    }
+
+    match /notifications/{notificationId} {
+      allow read, update, delete: if request.auth != null && request.auth.uid == resource.data.recipientId;
+      allow create: if request.auth != null;
+    }
+  }
+}

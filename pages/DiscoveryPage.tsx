@@ -1,11 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import { collection, query, onSnapshot, Timestamp } from 'firebase/firestore';
-import { db } from '../services/firebase';
-import type { Event } from '../types';
+// pages/DiscoveryPage.tsx (Final with Robust Filters)
+import React, { useState, useEffect, useMemo } from 'react';
+import type { Event, EventCategory, User } from '../types';
 import { Icon } from '../components/Icon';
 import { Map } from '../components/Map';
 import { EventCard } from '../components/EventCard';
 import { FilterPanel } from '../components/FilterPanel';
+import { collection, onSnapshot, query, Timestamp } from 'firebase/firestore';
+import { db } from '../services/firebase';
+
+const adaptEventData = (eventData: any): Event => {
+    const startTime = eventData.startTime?.toDate ? eventData.startTime.toDate() : new Date(eventData.time || Date.now());
+    const endTime = eventData.endTime?.toDate ? eventData.endTime.toDate() : new Date(startTime.getTime() + 2 * 60 * 60 * 1000);
+
+    const location = eventData.latitude && eventData.longitude ? {
+        lat: eventData.latitude,
+        lng: eventData.longitude,
+        address: eventData.location,
+    } : eventData.location?.lat && eventData.location?.lng ? {
+        lat: eventData.location.lat,
+        lng: eventData.location.lng,
+        address: eventData.location.address,
+    } : {
+        lat: 41.7151,
+        lng: 44.8271,
+        address: eventData.location || "Tbilisi, Georgia",
+    };
+
+    return {
+        id: eventData.id || eventData.unique_id,
+        title: eventData.title,
+        description: eventData.description || 'No description available.',
+        // --- FIX: Add a fallback category ---
+        category: (eventData.category as EventCategory) || 'General',
+        startTime,
+        endTime,
+        location,
+        host: eventData.host || { id: 'scraper-tktge', name: 'TKT.GE', avatarUrl: 'https://tkt.ge/favicon.ico' } as User,
+        capacity: eventData.capacity || 100,
+        attendees: eventData.attendees || [],
+        attendeeIds: eventData.attendeeIds || [],
+        isPrivate: eventData.isPrivate || false,
+        picture: eventData.picture,
+    } as Event;
+};
 
 export const DiscoveryPage: React.FC = () => {
     const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
@@ -13,76 +50,134 @@ export const DiscoveryPage: React.FC = () => {
     const [activeCategory, setActiveCategory] = useState('All');
     const [activeDateFilter, setActiveDateFilter] = useState('Today');
     const [customDate, setCustomDate] = useState('');
-    const [privacyFilter, setPrivacyFilter] = useState('All');
-    const [events, setEvents] = useState<Event[]>([]);
+    const [privacyFilter, setPrivacyFilter] = useState('Public'); // Default to Public
+    const [allEvents, setAllEvents] = useState<Event[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const eventsCollection = collection(db, 'events');
-        const q = query(eventsCollection);
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            const eventsData: Event[] = querySnapshot.docs.map(doc => ({
-                id: doc.id, ...doc.data(),
-                startTime: (doc.data().startTime as Timestamp)?.toDate(),
-                endTime: (doc.data().endTime as Timestamp)?.toDate(),
-            } as Event));
-            setEvents(eventsData);
-            setIsLoading(false);
-        });
-        return () => unsubscribe();
-    }, []);
+        const fetchEvents = async () => {
+            setIsLoading(true);
+            try {
+                const response = await fetch('/tkt_events_from_api.json');
+                const scrapedEvents = await response.json();
+                const adaptedScrapedEvents = scrapedEvents.map(adaptEventData);
 
-    const filteredEvents = events.filter((event) => {
-        const categoryMatch = activeCategory === 'All' || event.category === activeCategory;
-        let dateMatch = false;
-        const eventDate = event.startTime;
-        if (!eventDate) { dateMatch = false; }
-        else if (customDate) {
-            const startOfDay = new Date(customDate); startOfDay.setUTCHours(0, 0, 0, 0);
-            const endOfDay = new Date(customDate); endOfDay.setUTCHours(23, 59, 59, 999);
-            dateMatch = eventDate >= startOfDay && eventDate <= endOfDay;
-        } else {
-            switch (activeDateFilter) {
-                case 'Today': const today = new Date(); dateMatch = eventDate.getDate() === today.getDate() && eventDate.getMonth() === today.getMonth() && eventDate.getFullYear() === today.getFullYear(); break;
-                case 'Tomorrow': const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1); dateMatch = eventDate.getDate() === tomorrow.getDate() && eventDate.getMonth() === tomorrow.getMonth() && eventDate.getFullYear() === tomorrow.getFullYear(); break;
-                case 'This Weekend': const weekendToday = new Date(); const dayOfWeek = weekendToday.getDay(); const startOfWeekend = new Date(weekendToday); startOfWeekend.setDate(weekendToday.getDate() - dayOfWeek + 5); startOfWeekend.setHours(0, 0, 0, 0); const endOfWeekend = new Date(startOfWeekend); endOfWeekend.setDate(startOfWeekend.getDate() + 2); endOfWeekend.setHours(23, 59, 59, 999); dateMatch = eventDate >= startOfWeekend && eventDate <= endOfWeekend; break;
-                default: dateMatch = true; break;
+                const eventsCollection = collection(db, 'events');
+                const q = query(eventsCollection);
+                onSnapshot(q, (querySnapshot) => {
+                    const firestoreEvents = querySnapshot.docs.map(doc => adaptEventData({ id: doc.id, ...doc.data() }));
+                    setAllEvents([...adaptedScrapedEvents, ...firestoreEvents]);
+                    setIsLoading(false);
+                });
+            } catch (error) {
+                console.error("Failed to load events:", error);
+                setIsLoading(false);
             }
+        };
+        fetchEvents();
+    }, []);
+    // --- FIX: Add this useEffect to prevent the page from scrolling when filters are open ---
+    useEffect(() => {
+        if (showFilters) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
         }
-        const privacyMatch = privacyFilter === 'All' || (privacyFilter === 'Public' && !event.isPrivate) || (privacyFilter === 'Private' && event.isPrivate);
-        return categoryMatch && dateMatch && privacyMatch;
-    });
+        // Cleanup function to restore scrolling when the component is removed
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [showFilters]);
+    // --- FIX: Replace the entire useMemo block with this final, robust date logic ---
+    const filteredEvents = useMemo(() => {
+        // Helper function to get a date's YYYY-MM-DD string, ignoring timezones
+        const toLocalDateString = (date: Date) => {
+            const d = new Date(date);
+            // Adjust for timezone offset to prevent day-before errors
+            d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
+            const year = d.getFullYear();
+            const month = (d.getMonth() + 1).toString().padStart(2, '0');
+            const day = d.getDate().toString().padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
 
+        return allEvents.filter((event) => {
+            const categoryMatch = activeCategory === 'All' || event.category === activeCategory;
+            const privacyMatch = privacyFilter === 'All' ||
+                (privacyFilter === 'Public' && !event.isPrivate) ||
+                (privacyFilter === 'Private' && event.isPrivate);
+
+            if (!categoryMatch || !privacyMatch) {
+                return false;
+            }
+
+            const eventDate = new Date(event.startTime);
+            const today = new Date();
+
+            if (customDate) {
+                // The HTML date input gives a YYYY-MM-DD string.
+                // We compare it to the event's date, also formatted as YYYY-MM-DD.
+                return toLocalDateString(eventDate) === customDate;
+            }
+
+            if (activeDateFilter === 'All') {
+                return true;
+            }
+
+            if (activeDateFilter === 'Today') {
+                return toLocalDateString(eventDate) === toLocalDateString(today);
+            }
+
+            if (activeDateFilter === 'Tomorrow') {
+                const tomorrow = new Date();
+                tomorrow.setDate(today.getDate() + 1);
+                return toLocalDateString(eventDate) === toLocalDateString(tomorrow);
+            }
+
+            if (activeDateFilter === 'This Weekend') {
+                const dayOfWeek = today.getDay(); // Sunday=0, ..., Saturday=6
+                const friday = new Date();
+                // Find this week's Friday
+                friday.setDate(today.getDate() - dayOfWeek + 5);
+                friday.setHours(0, 0, 0, 0);
+
+                const sunday = new Date(friday);
+                sunday.setDate(friday.getDate() + 2);
+                sunday.setHours(23, 59, 59, 999);
+
+                return eventDate >= friday && eventDate <= sunday;
+            }
+
+            return false; // Exclude events if no date filter matches
+        });
+    }, [allEvents, activeCategory, activeDateFilter, customDate, privacyFilter]);
     return (
         <div className="w-full h-full relative">
-            <div className="absolute inset-0">
-                <Map events={filteredEvents} />
-            </div>
+            <div className="absolute inset-0"> <Map events={filteredEvents} /> </div>
             <div className="fixed top-[72px] left-1/2 -translate-x-1/2 z-20">
                 <div className="flex items-center bg-gray-200/80 dark:bg-dark-surface/80 backdrop-blur-sm p-1 rounded-full shadow-md space-x-1">
                     <div className="flex items-center bg-gray-300/50 dark:bg-black/20 p-0.5 rounded-full">
                         <button onClick={() => setViewMode('map')} className={`px-3 py-1.5 rounded-full transition-colors ${viewMode === 'map' ? 'bg-white dark:bg-dark-bg' : 'text-gray-600 dark:text-gray-300'}`}><Icon name="map" className="w-5 h-5" /></button>
                         <button onClick={() => setViewMode('list')} className={`px-3 py-1.5 rounded-full transition-colors ${viewMode === 'list' ? 'bg-white dark:bg-dark-bg' : 'text-gray-600 dark:text-gray-300'}`}><Icon name="list" className="w-5 h-5" /></button>
                     </div>
-                    <button onClick={() => setShowFilters(true)} className="px-4 py-1.5 text-sm font-bold text-gray-700 dark:text-gray-200">
-                        Filters
-                    </button>
+                    <button onClick={() => setShowFilters(true)} className="px-4 py-1.5 text-sm font-bold text-gray-700 dark:text-gray-200"> Filters </button>
                 </div>
             </div>
             {showFilters && (
                 <FilterPanel
+                    allEvents={allEvents}
                     activeCategory={activeCategory} setActiveCategory={setActiveCategory}
-                    activeDateFilter={activeDateFilter} setActiveDateFilter={setActiveDateFilter}
+                    activeDateFilter={activeDateFilter} setActiveDateFilter={setActiveDateFilter}                    
                     customDate={customDate} setCustomDate={setCustomDate}
                     privacyFilter={privacyFilter} setPrivacyFilter={setPrivacyFilter}
                     onClose={() => setShowFilters(false)}
                 />
             )}
-            <div className={`relative z-10 h-full overflow-y-auto pt-28 ${viewMode === 'list' ? 'block' : 'hidden'}`}>
-                {isLoading ? (<p className="text-center">Loading events...</p>) : (
+            <div className={`relative z-10 h-full overflow-y-auto pt-28 pb-20 ${viewMode === 'list' ? 'block' : 'hidden'}`}>
+                {isLoading ? (<p className="text-center p-4">Loading events...</p>) : (
                     filteredEvents.length > 0 ? (
                         filteredEvents.map((event) => (<EventCard key={event.id} event={event} />))
-                    ) : (<p className="text-center text-gray-500">No events found for this filter.</p>)
+                    ) : (<p className="text-center p-4 text-gray-500">No events found for this filter.</p>)
                 )}
             </div>
         </div>

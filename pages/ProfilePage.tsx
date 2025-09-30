@@ -8,18 +8,18 @@ import { FriendshipStatus } from '../types';
 import { RatingStars } from '../components/RatingStars';
 import { EventCard } from '../components/EventCard';
 import { FriendCard } from '../components/FriendCard';
+import { ProfileActions } from '../components/ProfileActions';
 import { Icon } from '../components/Icon';
 
 export const ProfilePage: React.FC = () => {
     const [myEvents, setMyEvents] = useState<Event[]>([]);
     const [friends, setFriends] = useState<User[]>([]);
-    // Revert to the simpler useAuth hook
     const { user, loading } = useAuth();
     const location = useLocation();
     const [showRatingModal, setShowRatingModal] = useState(!!location.state?.showRatingForEventId);
+    const [copied, setCopied] = useState(false);
 
     useEffect(() => {
-        // This simplified effect will now work because the rules are correct.
         if (user) {
             // Fetch Events
             const eventsQuery = query(collection(db, 'events'), where("host.id", "==", user.uid));
@@ -47,15 +47,20 @@ export const ProfilePage: React.FC = () => {
                 }
             });
 
-            // THIS IS THE FIX: Return a cleanup function.
-                       // This function will be called when the component unmounts (e.g., when you navigate away).
-                           // It detaches the listeners to prevent memory leaks and background errors.
-                           return () => {
-                                   unsubscribeEvents(); // Stop listening to events
-                                  unsubscribeFriends(); // Stop listening to friendships
-                                };
+            return () => {
+                unsubscribeEvents();
+                unsubscribeFriends();
+            };
         }
     }, [user]);
+
+    const handleCopyId = () => {
+        if (user?.uid) {
+            navigator.clipboard.writeText(user.uid);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000); // Reset after 2 seconds
+        }
+    };
 
     if (loading) {
         return <p className="p-4 text-center text-gray-500">Loading profile...</p>;
@@ -63,9 +68,16 @@ export const ProfilePage: React.FC = () => {
 
     return (
         <div>
-            <div className="p-6 flex flex-col items-center text-center">
+            <ProfileActions />
+
+            <div className="p-6 pt-0 flex flex-col items-center text-center">
                 <img src={user?.photoURL || 'https://via.placeholder.com/150'} alt={user?.displayName || 'User'} className="w-24 h-24 rounded-full border-4 border-brand-purple dark:border-brand-teal shadow-lg" />
-                <h1 className="text-2xl font-bold mt-4">{user?.displayName || 'New User'}</h1>
+                <div className="flex items-center space-x-2 mt-4">
+                    <h1 className="text-2xl font-bold">{user?.displayName || 'New User'}</h1>
+                    <button onClick={handleCopyId} className="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-dark-surface" aria-label="Copy User ID">
+                        <Icon name={copied ? "checkCircle" : "clipboard"} className={`w-5 h-5 ${copied ? 'text-green-500' : 'text-gray-500'}`} />
+                    </button>
+                </div>
                 <div className="mt-2"><RatingStars rating={4.5} size="md" /></div>
                 <p className="mt-4 text-gray-600 dark:text-gray-300 max-w-sm">Welcome to The FUN!</p>
             </div>

@@ -3,11 +3,13 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Rules for the 'users' collection
     match /users/{userId} {
       allow read: if request.auth != null;
       allow write: if request.auth != null && request.auth.uid == userId;
     }
 
+    // Rules for the 'events' collection
     match /events/{eventId} {
       allow read: if request.auth != null;
       allow create: if request.auth != null && request.resource.data.host.id == request.auth.uid;
@@ -15,6 +17,7 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // Rules for the 'chats' collection
     match /chats/{eventId} {
       function isAttendee() {
         return request.auth.uid in get(/databases/$(database)/documents/events/$(eventId)).data.attendeeIds;
@@ -23,6 +26,7 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // Rules for the friendships collection
     match /friendships/{friendshipId} {
       function isParticipant() {
         return request.auth.uid in resource.data.userIds;
@@ -35,9 +39,39 @@ service cloud.firestore {
       allow update: if isRequestee() && resource.data.status == 'pending';
     }
 
+    // Rules for the notifications collection
     match /notifications/{notificationId} {
       allow read, update, delete: if request.auth != null && request.auth.uid == resource.data.recipientId;
       allow create: if request.auth != null;
+    }
+
+    // --- NEW: Rules for the invitations collection ---
+    match /invitations/{invitationId} {
+      // Helper function to check if the user is the host of the event
+      function isHost() {
+        let eventHostId = get(/databases/$(database)/documents/events/$(resource.data.eventId)).data.host.id;
+        return request.auth.uid == eventHostId;
+      }
+
+      // Helper function to check if the user is the one being invited
+      function isInvitee() {
+        return request.auth.uid == resource.data.inviteeId;
+      }
+
+      // CREATE: Only the event host can create an invitation.
+      // We verify this by checking the hostId on the incoming document.
+      allow create: if request.auth.uid == request.resource.data.hostId;
+
+      // READ: Only the host or the invitee can read the invitation document.
+      allow read: if isHost() || isInvitee();
+
+      // UPDATE: Only the invitee can update the status of the invitation
+      // (e.g., to accept or decline it).
+      allow update: if isInvitee();
+
+      // DELETE: For data integrity, we prevent client-side deletion.
+      // Invitations should be managed by the system (e.g., deleted via Cloud Function if needed).
+      allow delete: if false;
     }
   }
 }

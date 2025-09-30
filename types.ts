@@ -1,11 +1,10 @@
-// types.ts (Updated with New Categories)
+// types.ts (Corrected and final version)
 export interface ChatMessage { id: string; text: string; senderId: string; senderName: string; senderAvatar: string; timestamp: Date; }
 export interface Activity { name: string; icon: string; }
 export interface User { id: string; name: string; avatarUrl: string; rating: number; tags: string[]; bio: string; }
 
 export enum EventCategory {
   PARTY = 'Party', PICNIC = 'Picnic', SPORTS = 'Sports', CLUB = 'Club', GAMING = 'Gaming', STUDY = 'Study',
-  // New Categories from TKT.GE
   MUSIC = 'Music', CONCERT = 'Concert', CINEMA = 'Cinema', RAILWAY = 'Railway', TRANSPORT = 'Transport', THEATRE = 'Theatre',
   OPERA = 'Opera', SPORT = 'Sport', SEA = 'Sea', FESTIVAL = 'Festival', KIDS = 'Kids', CONFERENCE = 'Conference',
   TOURISM = 'Tourism', HOBBY = 'Hobby', MASTERCLASS = 'Masterclass', MUSEUM = 'Museum',
@@ -36,9 +35,16 @@ export interface Event {
   popularity?: number;
 }
 
-export interface Notification { id: string; type: 'invite' | 'request' | 'approval' | 'rating' | 'message'; text: string; timestamp: Date; read: boolean; relatedEventId?: string; relatedUserId?: string; }
-
-// --- NEW: Types for the Friends System ---
+export interface Notification {
+  id: string;
+  type: 'invite' | 'request' | 'approval' | 'rating' | 'message';
+  text: string;
+  timestamp: Date;
+  read: boolean;
+  relatedEventId?: string;
+  relatedUserId?: string;
+  relatedInvitationId?: string;
+}
 
 export enum FriendshipStatus {
   PENDING = 'pending',
@@ -47,8 +53,25 @@ export enum FriendshipStatus {
 }
 
 export interface Friendship {
-  id: string; // Combined UIDs: e.g., 'uid1_uid2'
+  id: string;
   userIds: [string, string];
   requesterId: string;
   status: FriendshipStatus;
 }
+
+// --- THIS IS THE FIX ---
+// Add the missing Invitation types that were causing the error.
+export enum InvitationStatus {
+  PENDING = 'pending',
+  ACCEPTED = 'accepted',
+  DECLINED = 'declined',
+}
+
+export interface Invitation {
+  id: string;
+  eventId: string;
+  hostId: string;
+  inviteeId: string;
+  status: InvitationStatus;
+}
+

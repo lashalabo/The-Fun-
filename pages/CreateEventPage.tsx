@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { db, auth } from '../services/firebase';
 import { collection, addDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 import { Autocomplete, useJsApiLoader } from '@react-google-maps/api';
+import { useNavigate } from 'react-router-dom';
 import { AIIdeaGenerator } from '../components/AIIdeaGenerator';
 import { EventCategory, GenderRatio, Activity } from '../types';
 import { Icon } from '../components/Icon';
+import { InviteFriendsModal } from '../components/InviteFriendsModal';
 
 const libraries: ('places')[] = ['places'];
 
@@ -15,6 +17,7 @@ const availableActivities: Activity[] = [
 ];
 
 export const CreateEventPage: React.FC = () => {
+    const navigate = useNavigate();
     const [capacity, setCapacity] = useState(10);
     const [genderRatio, setGenderRatio] = useState<GenderRatio>(GenderRatio.ANY);
     const [isPrivate, setIsPrivate] = useState(false);
@@ -33,6 +36,8 @@ export const CreateEventPage: React.FC = () => {
     const [musicInfo, setMusicInfo] = useState('');
     const [contributions, setContributions] = useState('');
     const [addressDetails, setAddressDetails] = useState('');
+    const [showInviteModal, setShowInviteModal] = useState(false);
+    const [newEventId, setNewEventId] = useState<string | null>(null);
 
 
     const { isLoaded } = useJsApiLoader({
@@ -126,16 +131,12 @@ export const CreateEventPage: React.FC = () => {
                 category,
                 startTime: Timestamp.fromDate(new Date(`${eventDate}T${startTime}`)),
                 endTime: Timestamp.fromDate(new Date(`${eventDate}T${endTime}`)),
-                // --- FIX: Use the 'isPrivate' state variable for reliability ---
                 isPrivate: isPrivate,
                 location: { address: (document.getElementById('location') as HTMLInputElement).value, lat, lng },
                 addressDetails,
                 host: hostData,
-                // --- THIS IS THE FIX ---
-                // Initialize the event with the host as the first attendee.
                 attendees: [hostData],
                 attendeeIds: [user.uid],
-                // --- END OF FIX ---
                 activities: selectedActivities,
                 musicInfo: musicInfo,
                 contributions: contributions.split(',').map(item => item.trim()),
@@ -144,9 +145,9 @@ export const CreateEventPage: React.FC = () => {
                 createdAt: serverTimestamp(),
             };
 
-            await addDoc(collection(db, "events"), newEvent);
-            alert("Event created successfully!");
-            window.location.hash = `/discover`;
+            const docRef = await addDoc(collection(db, "events"), newEvent);
+            setNewEventId(docRef.id);
+            setShowInviteModal(true); // Show invite modal instead of redirecting
         } catch (error) {
             console.error("Error creating event: ", error);
             alert("Failed to create event.");
@@ -154,6 +155,7 @@ export const CreateEventPage: React.FC = () => {
             setIsLoading(false);
         }
     };
+    const handleCloseModal = () => navigate('/discover');
 
     if (!isLoaded) return <div className="p-4 text-center">Loading...</div>;
 
@@ -214,6 +216,10 @@ export const CreateEventPage: React.FC = () => {
 
                 <button type="submit" disabled={isLoading} className="w-full bg-brand-purple dark:bg-brand-teal text-white font-bold py-3 px-4 rounded-lg hover:opacity-90 disabled:bg-gray-400">{isLoading ? 'Creating Event...' : 'Create Event'}</button>
             </form>
+            {showInviteModal && newEventId && auth.currentUser && (
+                <InviteFriendsModal eventId={newEventId} hostId={auth.currentUser.uid} onClose={handleCloseModal} />
+            )}
         </div>
     );
 };
+

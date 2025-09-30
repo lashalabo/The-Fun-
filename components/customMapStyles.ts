@@ -1,305 +1,111 @@
 // components/customMapStyles.ts
 // A collection of artistic map styles for the Google Maps API.
-// You can generate your own styles using tools like: https://mapstyle.withgoogle.com/
 
 export const customMapStyles = {
-    // Style inspired by the vintage, blocky look of the London map image.
+    // --- DARK THEMES ---
+    blackAndWhiteDark: [
+        // ... (style content is correct)
+        { elementType: "geometry", stylers: [{ color: "#212121" }] },
+        { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+        { elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
+        { elementType: "labels.text.stroke", stylers: [{ color: "#212121" }] },
+        { featureType: "administrative", elementType: "geometry", stylers: [{ color: "#757575" }] },
+        { featureType: "administrative.country", elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] },
+        { featureType: "administrative.land_parcel", stylers: [{ visibility: "off" }] },
+        { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#bdbdbd" }] },
+        { featureType: "poi", stylers: [{ visibility: "off" }] },
+        { featureType: "road", elementType: "geometry.fill", stylers: [{ color: "#2d2d2d" }] },
+        { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#393939" }] },
+        { featureType: "road.arterial", elementType: "geometry", stylers: [{ color: "#373737" }] },
+        { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#3c3c3c" }] },
+        { featureType: "road.highway.controlled_access", elementType: "geometry", stylers: [{ color: "#4e4e4e" }] },
+        { featureType: "road.local", elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
+        { featureType: "transit", stylers: [{ visibility: "off" }] },
+        { featureType: "water", elementType: "geometry", stylers: [{ color: "#000000" }] },
+    ],
+    cyberpunk: [
+        // ... (style content is correct)
+        { elementType: "geometry", stylers: [{ color: "#070F34" }] },
+        { elementType: "labels.text.fill", stylers: [{ color: "#F715AB" }] },
+        { elementType: "labels.text.stroke", stylers: [{ color: "#070F34" }] },
+        { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+        { featureType: "administrative", elementType: "geometry.stroke", stylers: [{ color: "#34EDF3", weight: 1 }] },
+        { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#34EDF3" }, { weight: 1.5 }] },
+        { featureType: "landscape.man_made", elementType: "geometry.fill", stylers: [{ color: "#1f165fff" }] },
+        { featureType: "landscape.man_made", elementType: "geometry.stroke", stylers: [{ color: "#34EDF3" }, { weight: 1.5 }] },
+        
+        { featureType: "poi.park", elementType: "geometry.fill", stylers: [{ color: "#9201CB" }] },
+        { featureType: "poi.sports_complex", elementType: "geometry.fill", stylers: [{ color: "#9f1c74ff" }] },
+        { featureType: "poi.business", stylers: [{ visibility: "off" }] },
+        { featureType: "poi.attraction", stylers: [{ visibility: "off" }] },
+        { featureType: "water", elementType: "geometry.fill", stylers: [{ color: "#0313A6" }] },
+        { featureType: "transit", stylers: [{ visibility: "off" }] },
+    ],
+
+    // --- LIGHT THEMES ---
+    blackAndWhiteLight: [
+        { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
+        { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+        { elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
+        { elementType: "labels.text.stroke", stylers: [{ color: "#f5f5f5" }] },
+        { featureType: "administrative.land_parcel", stylers: [{ visibility: "off" }] },
+        // --- FIX: Highlighting man-made areas in dark brown ---
+        { featureType: "landscape.man_made", elementType: "geometry.fill", stylers: [{ color: "#7c7977ff" }] },
+        { featureType: "poi", stylers: [{ visibility: "off" }] },
+        { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+        { featureType: "road.arterial", elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
+        { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#dadada" }] },
+        { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
+        { featureType: "road.local", elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] },
+        { featureType: "transit", stylers: [{ visibility: "off" }] },
+        { featureType: "water", elementType: "geometry", stylers: [{ color: "#c9c9c9" }] },
+    ],
+    sepia: [
+        { elementType: "geometry", stylers: [{ color: "#f3eac8" }] },
+        { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+        { elementType: "labels.text.fill", stylers: [{ color: "#54412A" }] },
+        { elementType: "labels.text.stroke", stylers: [{ color: "#f3eac8" }] },
+        { featureType: "administrative", elementType: "geometry.stroke", stylers: [{ color: "#c9b2a6" }] },
+        // --- FIX: Highlighting man-made areas in dark brown ---
+        { featureType: "landscape.man_made", elementType: "geometry.fill", stylers: [{ color: "#b06c4a" }] },
+        { featureType: "poi", stylers: [{ visibility: "off" }] },
+        { featureType: "road", elementType: "geometry", stylers: [{ color: "#e4d8b6" }] },
+        { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#d1bfa0" }] },
+        { featureType: "transit", stylers: [{ visibility: "off" }] },
+        { featureType: "water", elementType: "geometry.fill", stylers: [{ color: "#a1caf1" }] },
+    ],
     vintage: [
         { elementType: "geometry", stylers: [{ color: "#ebe3cd" }] },
+        { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
         { elementType: "labels.text.fill", stylers: [{ color: "#523735" }] },
         { elementType: "labels.text.stroke", stylers: [{ color: "#f5f1e6" }] },
-        {
-            featureType: "administrative",
-            elementType: "geometry.stroke",
-            stylers: [{ color: "#c9b2a6" }],
-        },
-        {
-            featureType: "administrative.land_parcel",
-            elementType: "geometry.stroke",
-            stylers: [{ color: "#dcd2be" }],
-        },
-        {
-            featureType: "administrative.land_parcel",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#ae9e90" }],
-        },
-        // --- Key change: Make buildings a prominent, warm color ---
-        {
-            featureType: "landscape.man_made",
-            elementType: "geometry.fill",
-            stylers: [{ color: "#e49945" }], // Orange/Brown for buildings
-        },
-        {
-            featureType: "landscape.natural",
-            elementType: "geometry",
-            stylers: [{ color: "#dfd2ae" }],
-        },
-        { featureType: "poi", elementType: "geometry", stylers: [{ color: "#dfd2ae" }] },
-        {
-            featureType: "poi",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#93817c" }],
-        },
-        {
-            featureType: "poi.park",
-            elementType: "geometry.fill",
-            stylers: [{ color: "#a5b076" }],
-        },
-        {
-            featureType: "poi.park",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#447530" }],
-        },
-        {
-            featureType: "road",
-            elementType: "geometry",
-            stylers: [{ color: "#f5f1e6" }],
-        },
-        {
-            featureType: "road.arterial",
-            elementType: "geometry",
-            stylers: [{ color: "#fdfcf8" }],
-        },
-        {
-            featureType: "road.highway",
-            elementType: "geometry",
-            stylers: [{ color: "#f8c967" }],
-        },
-        {
-            featureType: "road.highway",
-            elementType: "geometry.stroke",
-            stylers: [{ color: "#e9bc62" }],
-        },
-        {
-            featureType: "transit.line",
-            elementType: "geometry",
-            stylers: [{ color: "#dfd2ae" }],
-        },
-        {
-            featureType: "transit.station",
-            elementType: "geometry",
-            stylers: [{ color: "#dfd2ae" }],
-        },
-        // --- Key change: Make water a distinct, contrasting color ---
-        { featureType: "water", elementType: "geometry.fill", stylers: [{ color: "#b9d3c2" }] },
-        { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#92998d" }] },
+        { featureType: "administrative", elementType: "geometry.stroke", stylers: [{ color: "#c9b2a6" }] },
+        { featureType: "administrative.land_parcel", stylers: [{ visibility: "off" }] },
+        { featureType: "landscape.man_made", elementType: "geometry.stroke", stylers: [{ color: "#7a5a4a" }, { weight: 1.5 }] },
+        { featureType: "landscape.man_made", elementType: "geometry.fill", stylers: [{ color: "#b06c4a" }] },
+        { featureType: "landscape.natural", elementType: "geometry", stylers: [{ color: "#dfd2ae" }] },
+        { featureType: "poi", stylers: [{ visibility: "off" }] },
+        { featureType: "road", elementType: "geometry", stylers: [{ color: "#f5f1e6" }] },
+        { featureType: "road.arterial", elementType: "geometry", stylers: [{ color: "#fdfcf8" }] },
+        { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#d97c3b" }] },
+        { featureType: "transit", stylers: [{ visibility: "off" }] },
+        { featureType: "water", elementType: "geometry.fill", stylers: [{ color: "#4a7c7b" }] },
     ],
-
-    // Style inspired by the dark, neon look of the Amsterdam/Göttingen maps.
-    cyberpunk: [
-        { elementType: "geometry", stylers: [{ color: "#1d2c4d" }] },
-        { elementType: "labels.text.fill", stylers: [{ color: "#8ec3b9" }] },
-        { elementType: "labels.text.stroke", stylers: [{ color: "#1a3646" }] },
-        {
-            featureType: "administrative.country",
-            elementType: "geometry.stroke",
-            stylers: [{ color: "#4b6878" }],
-        },
-        {
-            featureType: "administrative.land_parcel",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#64779e" }],
-        },
-        {
-            featureType: "administrative.province",
-            elementType: "geometry.stroke",
-            stylers: [{ color: "#4b6878" }],
-        },
-        // --- Key change: Make buildings dark but visible ---
-        {
-            featureType: "landscape.man_made",
-            elementType: "geometry.stroke",
-            stylers: [{ color: "#334e87" }],
-        },
-        {
-            featureType: "landscape.natural",
-            elementType: "geometry",
-            stylers: [{ color: "#023e58" }],
-        },
-        { featureType: "poi", elementType: "geometry", stylers: [{ color: "#283d6a" }] },
-        {
-            featureType: "poi",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#6f9ba5" }],
-        },
-        {
-            featureType: "poi",
-            elementType: "labels.text.stroke",
-            stylers: [{ color: "#1d2c4d" }],
-        },
-        {
-            featureType: "poi.park",
-            elementType: "geometry.fill",
-            stylers: [{ color: "#023e58" }],
-        },
-        {
-            featureType: "poi.park",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#3C7680" }],
-        },
-        // --- Key change: Roads are bright, neon lines ---
-        { featureType: "road", elementType: "geometry", stylers: [{ color: "#304a7d" }] },
-        {
-            featureType: "road",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#98a5be" }],
-        },
-        {
-            featureType: "road",
-            elementType: "labels.text.stroke",
-            stylers: [{ color: "#1d2c4d" }],
-        },
-        {
-            featureType: "road.highway",
-            elementType: "geometry",
-            stylers: [{ color: "#2c6675" }],
-        },
-        {
-            featureType: "road.highway",
-            elementType: "geometry.stroke",
-            stylers: [{ color: "#255763" }],
-        },
-        // --- Key change: Water is a vibrant, contrasting cyan ---
-        { featureType: "water", elementType: "geometry", stylers: [{ color: "#007bff" }] },
-        { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#4e6d70" }] },
-    ],
-
-    // A colorful, peachy style for a unique look.
     peach: [
-        {
-            "featureType": "all",
-            "elementType": "labels.text.fill",
-            "stylers": [
-                {
-                    "color": "#ffffff"
-                }
-            ]
-        },
-        {
-            "featureType": "all",
-            "elementType": "labels.text.stroke",
-            "stylers": [
-                {
-                    "color": "#000000"
-                },
-                {
-                    "lightness": 13
-                }
-            ]
-        },
-        {
-            "featureType": "administrative",
-            "elementType": "geometry.fill",
-            "stylers": [
-                {
-                    "color": "#000000"
-                }
-            ]
-        },
-        {
-            "featureType": "administrative",
-            "elementType": "geometry.stroke",
-            "stylers": [
-                {
-                    "color": "#144b53"
-                },
-                {
-                    "lightness": 14
-                },
-                {
-                    "weight": 1.4
-                }
-            ]
-        },
-        {
-            "featureType": "landscape",
-            "elementType": "all",
-            "stylers": [
-                {
-                    "color": "#08304b"
-                }
-            ]
-        },
-        {
-            "featureType": "poi",
-            "elementType": "geometry",
-            "stylers": [
-                {
-                    "color": "#0c4152"
-                },
-                {
-                    "lightness": 5
-                }
-            ]
-        },
-        {
-            "featureType": "road.highway",
-            "elementType": "geometry.fill",
-            "stylers": [
-                {
-                    "color": "#000000"
-                }
-            ]
-        },
-        {
-            "featureType": "road.highway",
-            "elementType": "geometry.stroke",
-            "stylers": [
-                {
-                    "color": "#0b434f"
-                },
-                {
-                    "lightness": 25
-                }
-            ]
-        },
-        {
-            "featureType": "road.arterial",
-            "elementType": "geometry.fill",
-            "stylers": [
-                {
-                    "color": "#000000"
-                }
-            ]
-        },
-        {
-            "featureType": "road.arterial",
-            "elementType": "geometry.stroke",
-            "stylers": [
-                {
-                    "color": "#0b3d51"
-                },
-                {
-                    "lightness": 16
-                }
-            ]
-        },
-        {
-            "featureType": "road.local",
-            "elementType": "geometry",
-            "stylers": [
-                {
-                    "color": "#000000"
-                }
-            ]
-        },
-        {
-            "featureType": "transit",
-            "elementType": "all",
-            "stylers": [
-                {
-                    "color": "#146474"
-                }
-            ]
-        },
-        {
-            "featureType": "water",
-            "elementType": "all",
-            "stylers": [
-                {
-                    "color": "#021019"
-                }
-            ]
-        }
-    ]
+        { elementType: "geometry", stylers: [{ color: "#f5f1e6" }] },
+        { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+        { elementType: "labels.text.fill", stylers: [{ color: "#523735" }] },
+        { elementType: "labels.text.stroke", stylers: [{ color: "#f5f1e6" }] },
+        { featureType: "administrative.land_parcel", stylers: [{ visibility: "off" }] },
+        // --- FIX: Highlighting man-made areas in dark brown ---
+        { featureType: "landscape.man_made", elementType: "geometry.fill", stylers: [{ color: "#ea956aff" }] },
+        { featureType: "poi", stylers: [{ visibility: "off" }] },
+        { featureType: "road", elementType: "geometry", stylers: [{ color: "#d9c3a5" }] },
+        { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#bfa98b" }] },
+        { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#c2a987" }] },
+        { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#a89071" }] },
+        { featureType: "transit", stylers: [{ visibility: "off" }] },
+        { featureType: "water", elementType: "geometry.fill", stylers: [{ color: "#81b0c4" }] },
+    ],
 };
+

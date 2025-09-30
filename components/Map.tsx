@@ -1,18 +1,21 @@
-// components/Map.tsx (Updated)
 import React, { useState, useEffect } from 'react';
 import { GoogleMap, useJsApiLoader, MarkerF, InfoWindowF } from '@react-google-maps/api';
 import { useNavigate } from 'react-router-dom';
 import type { Event } from '../types';
-import { useTheme } from '../hooks/useTheme';
-import { mapStyles } from './mapStyles';
+import { customMapStyles } from './customMapStyles';
 
 const libraries: ('places')[] = ['places'];
 const containerStyle = { width: '100%', height: '100vh' };
 const defaultCenter = { lat: 41.7151, lng: 44.8271 };
 
-export const Map: React.FC<{ events: Event[] }> = ({ events }) => {
+// --- FIX: Update the props to accept a mapStyleId ---
+interface MapProps {
+    events: Event[];
+    mapStyleId: string;
+}
+
+export const Map: React.FC<MapProps> = ({ events, mapStyleId }) => {
     const navigate = useNavigate();
-    const { theme } = useTheme();
     const [activeMarker, setActiveMarker] = useState<string | null>(null);
     const [center, setCenter] = useState(defaultCenter);
 
@@ -37,13 +40,16 @@ export const Map: React.FC<{ events: Event[] }> = ({ events }) => {
     if (loadError) return <div>Error loading maps</div>;
     if (!isLoaded) return <div>Loading...</div>;
 
+    // --- FIX: Dynamically select the style based on the passed ID ---
+    const selectedStyle = customMapStyles[mapStyleId as keyof typeof customMapStyles] || customMapStyles.sepia;
+
     return (
         <GoogleMap
             mapContainerStyle={containerStyle}
             center={center}
             zoom={12}
             options={{
-                styles: theme === 'dark' ? mapStyles.dark : mapStyles.light,
+                styles: selectedStyle,
                 disableDefaultUI: true,
                 zoomControl: true,
                 scrollwheel: true,
@@ -60,7 +66,7 @@ export const Map: React.FC<{ events: Event[] }> = ({ events }) => {
                     {activeMarker === event.id && (
                         <InfoWindowF
                             onCloseClick={() => setActiveMarker(null)}
-                            options={{ disableAutoPan: true }} // Add this 'options' prop
+                            options={{ disableAutoPan: true }}
                         >
                             <div className="p-1">
                                 <h3 className="font-bold text-md text-gray-800">{event.title}</h3>
@@ -72,3 +78,4 @@ export const Map: React.FC<{ events: Event[] }> = ({ events }) => {
         </GoogleMap>
     );
 };
+
